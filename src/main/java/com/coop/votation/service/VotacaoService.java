@@ -34,15 +34,20 @@ public class VotacaoService {
         }
     }
 
-    public Pauta criarPauta(PautaRequest request) {
+    public PautaResponse criarPauta(PautaRequest request) {
         Pauta pauta = Pauta.builder()
                 .titulo(request.getTitulo())
                 .descricao(request.getDescricao())
                 .build();
-        return pautaRepository.save(pauta);
+        Pauta saved = pautaRepository.save(pauta);
+        return PautaResponse.builder()
+                .id(saved.getId())
+                .titulo(saved.getTitulo())
+                .descricao(saved.getDescricao())
+                .build();
     }
 
-    public SessaoVotacao abrirSessao(UUID pautaId, Long minutos) {
+    public SessaoResponse abrirSessao(UUID pautaId, Long minutos) {
         Pauta pauta = pautaRepository.findById(pautaId)
                 .orElseThrow(() -> new IllegalArgumentException("Pauta não encontrada."));
 
@@ -58,7 +63,14 @@ public class VotacaoService {
                 .dataFim(LocalDateTime.now().plusMinutes(duracao))
                 .build();
 
-        return sessaoVotacaoRepository.save(sessao);
+        SessaoVotacao saved = sessaoVotacaoRepository.save(sessao);
+
+        return SessaoResponse.builder()
+                .id(saved.getId())
+                .pautaId(saved.getPauta().getId())
+                .dataInicio(saved.getDataInicio())
+                .dataFim(saved.getDataFim())
+                .build();
     }
 
     @Transactional

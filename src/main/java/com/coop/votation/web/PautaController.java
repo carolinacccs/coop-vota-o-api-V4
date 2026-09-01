@@ -20,8 +20,8 @@ public class PautaController {
     private final VotacaoService votacaoService;
 
     @PostMapping
-    public ResponseEntity<Pauta> cadastrarPauta(@RequestBody @Valid PautaRequest request) {
-        Pauta novaPauta = votacaoService.criarPauta(request);
+    public ResponseEntity<com.coop.votation.dto.PautaResponse> cadastrarPauta(@RequestBody @Valid PautaRequest request) {
+        com.coop.votation.dto.PautaResponse novaPauta = votacaoService.criarPauta(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaPauta);
     }
 
@@ -31,11 +31,12 @@ public class PautaController {
     }
 
     @PostMapping("/{id}/abrir")
-    public ResponseEntity<SessaoVotacao> abrirSessao(
+    public ResponseEntity<com.coop.votation.dto.SessaoResponse> abrirSessao(
             @PathVariable UUID id,
             @RequestBody(required = false) AbrirSessaoRequest request) {
         Long minutos = (request != null) ? request.getTempoEmMinutos() : null;
-        return ResponseEntity.ok(votacaoService.abrirSessao(id, minutos));
+        com.coop.votation.dto.SessaoResponse resp = votacaoService.abrirSessao(id, minutos);
+        return ResponseEntity.ok(resp);
     }
 
     @GetMapping("/{id}/votar")
